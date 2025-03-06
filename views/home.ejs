@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+      body {
+        font-family: 'Fira Code', monospace;
+        background: linear-gradient(to right, #e0f7fa, #ffffff);
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 2.5em;
+        color: #00796b;
+      }
+
+      h2 {
+        text-align: center;
+        color: #00796b;
+        margin-bottom: 30px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        font-weight: bold;
+        display: block;
+        margin: 10px 0 5px;
+      }
+
+      input[type='text'] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #00796b;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      input[type='text']:focus {
+        border-color: #004d40;
+        outline: none;
+      }
+
+      button {
+        background-color: #00796b;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #004d40;
+      }
+
+      .url-generated {
+        margin: 20px 0;
+        padding: 10px;
+        background-color: #e0f2f1;
+        border-radius: 5px;
+        text-align: center;
+      }
+
+      .url-generated a {
+        color: #00796b;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .url-generated a:hover {
+        text-decoration: underline;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+
+      th {
+        background-color: #00796b;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tr:hover {
+        background-color: #e0f7fa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>URL Shortener</h1>
+      <h2>
+        <% if (locals.user) { %>
+          Hi <%= user.username %>
+          <button id="logout" style="margin-left: 20px;">Logout</button>
+        <% } %>
+      </h2>
+
+      <div>
+        <% if (locals.id) { %>
+        <div class="url-generated">
+          <label>URL Generated:</label>
+          <a href="http://localhost:8000/url/<%= id %>"> <%= id %></a>
+        </div>
+        <% } %>
+      </div>
+
+      <div>
+        <form action="/url" method="post">
+          <label for="url">Enter URL here</label>
+          <input
+            type="text"
+            id="url"
+            name="url"
+            placeholder="https://www.example.com"
+            required
+          />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <% if (locals.Urls) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th style="width: 150px">ShortID</th>
+            <th style="width: 300px">Redirect URL</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% Urls.forEach((url, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= url.shortId %></td>
+            <td><%= url.redirectUrl %></td>
+            <td><%= url.visitHistory.length %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+
+    <!-- Logout Script -->
+    <script>
+      document.getElementById('logout').addEventListener('click', function() {
+        function deleteCookie(name) {
+          document.cookie = name + '=; Max-Age=0; path=/; secure; SameSite=Lax';
+        }
+        deleteCookie('token');
+        window.location.href = '/login';
+      });
+    </script>
+  </body>
+</html>
